@@ -17,11 +17,10 @@ class User {
     const DOCTOR = 2;
     const COACH = 3;
     const OTHER = -1;
-//public function __construct($userId, $password, $name, $gender, $telephone , $email, $avatar, $slogan, $birthday, $createdAt, $character) {
-//    $this->setUserId($userId);
-//    $this->setPassword($password);
-//
-//}
+
+    const FEMALE = 0;
+    const MALE = 1;
+    
     private $userId;
     private $password;
     private $name;
@@ -36,11 +35,21 @@ class User {
     
     public static function allCharacters(){
         return array(
-        self::EXERCISER,
-        self::DOCTOR,
-        self::COACH
+            self::ADMIN,
+            self::EXERCISER,
+            self::DOCTOR,
+            self::COACH,
+            self::OTHER
         );
     }
+    
+    public static function allGenders(){
+        return array(
+            self::FEMALE,
+            self::MALE
+        );
+    }
+    
     public function getUserId() {
         return $this->userId;
     }
@@ -54,7 +63,15 @@ class User {
     }
 
     public function getGender() {
-        return $this->gender;
+        switch ($this->gender){
+            case self::FEMALE:
+                return 'female';
+            case self::MALE:
+                return 'male';
+            default:
+                break;
+        }
+        return null;
     }
 
     public function getTelephone() {
@@ -82,22 +99,9 @@ class User {
     }
 
     public function getCharacter(){
-        switch($this->character){
-            case self::ADMIN:
-                return 'administrator';
-            case self::EXERCISER:
-                return 'common user';
-            case self::DOCTOR:
-                return 'doctor';
-            case self::COACH:
-                return 'coach';
-            case self::OTHER:
-                return 'other';
-            default :
-                break;        
-        }
-        return null;
+        return $this->character;
     }
+    
     public function setUserId($userId) {
         $this->userId = $userId;
     }
@@ -111,7 +115,17 @@ class User {
     }
 
     public function setGender($gender) {
-        $this->gender = $gender;
+        switch ($gender){
+            case 1:
+                $this->gender = self::FEMALE;
+                break;
+            case 0:
+                $this->gender = self::MALE;
+                break;
+            default:
+                $this->gender = null;
+                break;
+        }
     }
 
     public function setTelephone($telephone) {
@@ -135,7 +149,6 @@ class User {
     }
 
     public function setCreatedAt($createdAt) {
-        if(get_class($createdAt) !== DateTime){}
         $this->createdAt = $createdAt;
     }
 
@@ -162,22 +175,7 @@ class User {
                 break;
         }
     }
-
-    public function toArray(){
-        $params = array(
-            ':userId' => $this->getId(),
-            ':password' => $this->getPassword(),
-            ':name' => $this->getName(),
-            ':gender' => $this->getGender(),
-            ':telephone' => $this->getTelephone(),
-            ':email' => $this->getEmail(),
-            ':avatar' => $this->getAvatar(),
-            ':slogan' => $this->getSlogan(),
-            ':birthday' => $this->getBirthday(),
-            ':createdAt' => $this->getCreatedAt(),
-            ':character' => $this->getCharacter()
-        );
     }
         
    
-}
+

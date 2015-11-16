@@ -37,7 +37,10 @@ final class UserDao {
         return $this->execute($sql, $user);
     } 
     
-     private function execute($sql, User $user) {
+    public function find($type = null) {
+        
+    }
+    private function execute($sql, User $user) {
         $statement = $this->getDb()->prepare($sql);
         $this->executeStatement($statement,$user->toArray());
     }
