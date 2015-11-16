@@ -36,9 +36,8 @@ final class UserDao {
                 . ' values(:userId, :password, :name, :gender, :telephone, :email, :avatar, :slogan, :birthday, :createdAt, :character)';
         return $this->execute($sql, $user);
     } 
-}
-
-    private function execute($sql, User $user) {
+    
+     private function execute($sql, User $user) {
         $statement = $this->getDb()->prepare($sql);
         $this->executeStatement($statement,$user->toArray());
     }
@@ -48,8 +47,10 @@ final class UserDao {
             throw new Exception('fail to execute the statement');
         }
     }
-    
 }
+
+   
+    
 
 $userDao = new UserDao();
 $userDao->insert(new User());
