@@ -1,7 +1,7 @@
 <?php
 
 require '../model/User.php';
-require '../util/User.php';
+require '../util/DateTransform.php';
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -63,6 +63,7 @@ final class UserMapper{
             ':createdAt' => $user->getCreatedAt(),
             ':character' => $user->getCharacter()
        );
+       
        return $params;
    }
     
