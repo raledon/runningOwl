@@ -1,5 +1,4 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -18,6 +17,7 @@ class Advice{
     /** @var DateTime */
     private $createdAt;
     
+  
     public function setAdviceId($adviceId){
         $this->adviceId = $adviceId;
     }
@@ -50,12 +50,6 @@ class Advice{
         return $this->createdAt;
     }
  
-    public function __toString() {
-        return $this->getAdviceId() . ";"
-            . $this->getContent() . ";"
-            . $this->getCreatedBy() . ";"
-            . $this->getCreatedAt();
-    }
     
 }
 

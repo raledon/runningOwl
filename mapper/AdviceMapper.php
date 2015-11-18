@@ -22,4 +22,22 @@ class AdviceMapper {
         );
         return $params;
     }
+    
+    public static function map(Advice $advice, array $properties){
+        if(array_key_exists('adviceId', $properties)){
+            $advice->setAdviceId($properties['adviceId']);
+        }
+        if(array_key_exists('content', $properties)){
+            $advice->setContent($properties['content']);
+        }
+        if(array_key_exists('createdBy', $properties)){
+            $advice->setCreatedBy($properties['createdBy']);
+        }
+        if(array_key_exists('createdAt', $properties)){
+            $createdAt = DateTransform::createDateTime($properties['createdAt']);
+            if($createdAt){
+                $advice->setCreatedAt($createdAt);
+            }
+        }
+    }
 }

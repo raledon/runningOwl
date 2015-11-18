@@ -54,27 +54,43 @@ final class AdviceDao {
         $statement = $this->getDb()->prepare($sql);
         $this->execute($sql, AdviceMapper::getParams($advice));
         if(!$advice->getAdviceId()){
-            //return $this->find
+            return $this->findById($this->getDb()->lastInsertId());
         }
+        if(!$statement->rowCount()){
+            
+        }
+        return $advice;
     }
     
     public function findById($adviceId){
         $sql = "select * from $this->tableName where adviceId = :adviceId";
         $statement = $this->getDb()->prepare($sql);
         $statement->bindParam(':adviceId', $adviceId, PDO::PARAM_INT);
-        $statement->execute();
-                
+        $statement->execute();            
         $statement->setFetchMode(PDO::FETCH_ASSOC);
-
-        while($row = $statement->fetch()){
-            echo $row['createdAt'];
+        $row = $statement->fetch();
+        if(!$row){
+            return null;
         }
+        $advice = new Advice();
+        AdviceMapper::map($advice, $row);
+        return $advice;
+    }
+
+    public function findAll(){
+        $sql = $this->getFindSql();
     }
     
-    private static function formatDateTime(DateTime $date) {
-        return $date->format(DateTime::ISO8601);
+    private function getFindSql($property = null){
+        $sql = 'select * from ' . $this->tableName;
+        $where = ' ';
+        $orderBy = 'order by ';
+        return $sql;
     }
+    
+    private function
 }
+
 
 $adviceDao = new AdviceDao();
 $adviceDao->getDb();
@@ -82,5 +98,5 @@ $advice = new Advice();
 $advice->setContent('what if i want to eat without getting fat while i have been escaping exercising for decades');
 $advice->setCreatedBy(1);
 //$adviceDao->insert($advice);
-var_dump($adviceDao->findById(1));
+var_dump($adviceDao->findById('1'));
 ?>
