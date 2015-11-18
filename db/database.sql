@@ -81,7 +81,7 @@ create table advice(
     adviceId integer primary key autoincrement,
     content text not null,
     createdBy integer not null,
-    createdAt not null
+    createdAt datetime not null
 );
 
 drop table if exists reply;

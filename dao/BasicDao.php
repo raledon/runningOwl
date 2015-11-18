@@ -14,11 +14,11 @@ include '../config/Config.php';
 
 final class BasicDao{
   public static function getDb(){
-      $config = Config::getConfig('db');
+      $config = Config::getConfig('sqlitedb');
       echo 'in the function Basic Dao'.$config['dsn'];
       try {
           //$this->db = new PDO($config['dsn']);
-          $db = new PDO('sqlite:'.$config['dsn']);
+          $db = new PDO($config['dsn']);
           $db->setAttribute(PDO::ATTR_ERRMODE, 
                               PDO::ERRMODE_EXCEPTION);
           //$this->db->exec("CREATE TABLE Dogs (Id INTEGER PRIMARY KEY, Breed TEXT, Name TEXT, Age INTEGER)");  
