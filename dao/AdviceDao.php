@@ -1,6 +1,7 @@
 <?php
 require 'BasicDao.php';
 require '../model/Advice.php';
+require '../mapper/AdviceMapper.php';
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -35,15 +36,39 @@ final class AdviceDao {
     public function insert(Advice $advice){
         $advice->setAdviceId(null);
         $advice->setCreatedAt(new DateTime());
-       // echo $advice->getCreatedAt()->format('Y-m-d H:i:s');
-        //echo $advice->getCreatedAt();
-        $sql = 'insert into ' . $this->tableName . 'values( :content, :createdBy, :createdAt)';
-        $statement = $this->getDb()->prepare('$sql');
-        $date = array('content'=>$advice->getContent(), 'createdBy'=>$advice->getCreatedBy(), 'createdAt'=>$advice->getCreatedAt());
-        $statement->execute($date);
+        $sql = 'insert into '
+                . $this->tableName 
+                . '(adviceId, content,createdBy,createdAt) '
+                . 'values( :adviceId, :content, :createdBy, :createdAt)';
+        $statement = $this->getDb()->prepare($sql);
+        $data =  AdviceMapper::getParams($advice);
+        echo $data[':content'];
+        $statement->execute($data);
        // echo date_format($advice->getCreatedAt(), 'Y-m-d H:i:s');
         
         
+    }
+    
+    
+    private function execute($sql, Advice $advice){
+        $statement = $this->getDb()->prepare($sql);
+        $this->execute($sql, AdviceMapper::getParams($advice));
+        if(!$advice->getAdviceId()){
+            //return $this->find
+        }
+    }
+    
+    public function findById($adviceId){
+        $sql = "select * from $this->tableName where adviceId = :adviceId";
+        $statement = $this->getDb()->prepare($sql);
+        $statement->bindParam(':adviceId', $adviceId, PDO::PARAM_INT);
+        $statement->execute();
+                
+        $statement->setFetchMode(PDO::FETCH_ASSOC);
+
+        while($row = $statement->fetch()){
+            echo $row['createdAt'];
+        }
     }
     
     private static function formatDateTime(DateTime $date) {
@@ -55,5 +80,7 @@ $adviceDao = new AdviceDao();
 $adviceDao->getDb();
 $advice = new Advice();
 $advice->setContent('what if i want to eat without getting fat while i have been escaping exercising for decades');
-$adviceDao->insert($advice);
+$advice->setCreatedBy(1);
+//$adviceDao->insert($advice);
+var_dump($adviceDao->findById(1));
 ?>

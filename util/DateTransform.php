@@ -21,5 +21,8 @@ final class DateTransform {
         return DateTime::createFromFormat('Y-n-j H:i:s', $input);
     }
     
+    public static function dateTimeToString(DateTime $date){
+        return $date->format('Y-m-d H:i:s');
+    }
     
 }
