@@ -40,19 +40,26 @@ final class AdviceDao {
                 . $this->tableName 
                 . '(adviceId, content,createdBy,createdAt) '
                 . 'values( :adviceId, :content, :createdBy, :createdAt)';
-        $statement = $this->getDb()->prepare($sql);
-        $data =  AdviceMapper::getParams($advice);
+        return $this->execute($sql, $advice);
+        //$statement = $this->getDb()->prepare($sql);
+       // $data =  AdviceMapper::getParams($advice);
         //echo $data[':content'];
-        $statement->execute($data);
+        //$statement->execute($data);
        // echo date_format($advice->getCreatedAt(), 'Y-m-d H:i:s');
         
         
     }
     
+    public function delete($adviceId){
+        $sql = 'delete from ' . $this->tableName . ' where adviceId = :adviceId';
+        $statement = $this->getDb()->prepare($sql);
+        $this->executeStatement($statement, array(':adviceId'=>$adviceId));
+        return $statement->rowCount() == 1;
+    }
     
     private function execute($sql, Advice $advice){
         $statement = $this->getDb()->prepare($sql);
-        $this->execute($sql, AdviceMapper::getParams($advice));
+        $this->executeStatement($statement, AdviceMapper::getParams($advice));
         if(!$advice->getAdviceId()){
             return $this->findById($this->getDb()->lastInsertId());
         }
@@ -62,12 +69,15 @@ final class AdviceDao {
         return $advice;
     }
     
+    private function executeStatement(PDOStatement $statement, array $params) {
+        if (!$statement->execute($params)) {
+            throw new Exception('fail to execute the statement');
+        }
+    }   
+    
     public function findById($adviceId){
-        $sql = $this->getFindSql(array('adviceId'=>'?'));
-        $statement = $this->getDb()->prepare($sql);
-        $statement->bindParam(':adviceId', $adviceId, PDO::PARAM_INT);
-        $statement->execute();            
-        $statement->setFetchMode(PDO::FETCH_ASSOC);
+        $sql = $this->getFindSql(array('adviceId'=>$adviceId));
+        $statement = $this->query($sql);
         $row = $statement->fetch();
         if(!$row){
             return null;
@@ -80,7 +90,7 @@ final class AdviceDao {
     
     public function findAll(){
         $result = array();
-        $sql = $this->getFindSql(array('order by'=>createdAt));
+        $sql = $this->getFindSql(array('order by'=>'createdAt'));
         foreach ($this->query($sql) as $row){
             $advice = new Advice();
             AdviceMapper::map($advice, $row);
@@ -96,14 +106,19 @@ final class AdviceDao {
         }
         return $statement;
     }
-    
+    //unfinished
     public function find(array $properties){
         $sql = $this->getFindSql($properties);
-        $statement = $this->getDb()->query($sql);
-        
+        $result = array();
+        foreach ($this->query($sql) as $row) {
+            $advice = new Advice();
+            AdviceMapper::map($advice, $row);
+            $result[$advice->getAdviceId()] = $advice;
+        }
+        return $result;
     }
     
-    public function getFindSql(array $properties = null){
+    private function getFindSql(array $properties = null){
         $sql = 'select * from ' . $this->tableName;
         $where = '';
         $groupBy = '';
@@ -137,8 +152,11 @@ $adviceDao->getDb();
 $advice = new Advice();
 $advice->setContent('what if i want to eat without getting fat while i have been escaping exercising for decades');
 $advice->setCreatedBy(1);
-$adviceDao->insert($advice);
-var_dump($adviceDao->findById('1')->getCreatedBy());
-echo $adviceDao->getFindSql();
-echo $adviceDao->getFindSql(array('createdAt'=>'2015-10-10'));
+//$adviceDao->insert($advice);
+var_dump($adviceDao->findById('2'));
+//var_dump($adviceDao->findAll());
+//echo $adviceDao->delete('2');
+//echo $adviceDao->getFindSql();
+//echo $adviceDao->getFindSql(array('createdAt'=>'2015-10-10'));
+var_dump($adviceDao->find(array("createdBy"=>2)));
 ?>
